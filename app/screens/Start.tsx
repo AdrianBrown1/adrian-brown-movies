@@ -1,6 +1,6 @@
 import {RouteProp, useRoute} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {SafeAreaView, ScrollView, StatusBar} from 'react-native';
+import {SafeAreaView, FlatList, StatusBar} from 'react-native';
 import {useValue} from 'react-native-redash';
 
 import Modal from '@components/Modal';
@@ -38,21 +38,26 @@ const Start = () => {
         setModal(null);
     };
 
+    const renderItem = (movie: MovieType, index: number) => (
+        <Movie
+            activeMovieId={activeMovieId}
+            key={movie.name}
+            index={index}
+            movie={movie}
+            open={open}
+        />
+    );
+    // FILTER MOVIES TO REMOVE 4 FAKE ELEMENTS
+    const filteredMovies = movies.filter((movie) => movie.name != null);
+
     return (
         <>
             <StatusBar barStyle="dark-content" />
             <SafeAreaView>
-                <ScrollView contentInsetAdjustmentBehavior="automatic">
-                    {movies.map((movie, index) => (
-                        <Movie
-                            activeMovieId={activeMovieId}
-                            key={movie.name}
-                            index={index}
-                            movie={movie}
-                            open={open}
-                        />
-                    ))}
-                </ScrollView>
+                <FlatList
+                    data={filteredMovies}
+                    renderItem={({item, index}) => renderItem(item, index)}
+                />
                 {modal !== null && <Modal {...modal} close={close} />}
             </SafeAreaView>
         </>
